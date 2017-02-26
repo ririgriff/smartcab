@@ -23,7 +23,7 @@ class LearningAgent(Agent):
         ## TO DO ##
         ##         ##         ###########
         # Set any additional class parameters as needed
-        self.numtrials = 10.0
+        self.numtrials = 1.0
         #         # 
     def reset(self, destination=None, testing=False):
         """ The reset function is called at the beginning of each trial.
@@ -43,7 +43,7 @@ class LearningAgent(Agent):
         print "num trials"
         print self.numtrials
         #self.epsilon = self.epsilon - 0.05
-        self.epsilon = min(1, 1/ (self.numtrials*0.1)**2)
+        self.epsilon = min(1, 1/ (self.numtrials*0.015)**2)
         #self.epsilon = min(1, 1/ (self.numtrials)**2)
         if testing == True:
         	self.epsilon = 0
