@@ -3,6 +3,7 @@ import math
 from environment import Agent, Environment
 from planner import RoutePlanner
 from simulator import Simulator
+import numpy as np
 
 class LearningAgent(Agent):
     """ An agent that learns to drive in the Smartcab world.
@@ -44,7 +45,7 @@ class LearningAgent(Agent):
         print self.numtrials
         #self.epsilon = self.epsilon - 0.05
         self.epsilon = min(1, 1/ (self.numtrials*0.015)**2)
-        #self.epsilon = min(1, 1/ (self.numtrials)**2)
+
         if testing == True:
         	self.epsilon = 0
         	self.alpha = 0
@@ -116,7 +117,8 @@ class LearningAgent(Agent):
         self.state = state
         self.next_waypoint = self.planner.next_waypoint()
         action = None
-
+        maxQactions = []
+        print "Choose Action"
         ########### 
         ## TO DO ##
         ##         ##         ###########
@@ -125,21 +127,35 @@ class LearningAgent(Agent):
         #   Otherwise, choose an action with the highest Q-value for the current state
         if self.learning == False:
         	#random action
-        	action = self.valid_actions[random.randint(0,3)]
+        	#action = self.valid_actions[random.randint(0,3)]
+        	maxQactions = self.valid_actions
+        	print "self learning false"
         elif self.epsilon > random.random():
-        	action = self.valid_actions[random.randint(0,3)]
+        	#action = self.valid_actions[random.randint(0,3)]
+        	maxQactions = self.valid_actions
+        	print "epsilon > random"
         else:
+        	print "Entered 'else' section"
         	maxQ = max(self.Q[state].values())
-        	#print maxQ
-        	if self.Q[state][None] == maxQ:
-        		action = None
-        	elif self.Q[state]['forward'] == maxQ:
-        		action = 'forward'
-        	elif self.Q[state]['left'] == maxQ:
-        		action = 'left'
-        	else:
-        		action = 'right'
- 
+        	print maxQ
+        	print self.Q[state]
+        	
+        	if np.isclose(maxQ, self.Q[state][None], rtol=0.01, equal_nan=True):
+        		maxQactions.append(None)
+        		
+        	if np.isclose(maxQ, self.Q[state]['forward'], rtol=0.01, equal_nan=True):
+        		maxQactions.append('forward')
+        	
+        	if np.isclose(maxQ, self.Q[state]['left'], rtol=0.01, equal_nan=True):
+        		maxQactions.append('left')
+        		
+        	if np.isclose(maxQ, self.Q[state]['right'], rtol=0.01, equal_nan=True):
+        		maxQactions.append('right')
+        
+        print maxQactions
+        print len(maxQactions)
+        action = maxQactions[random.randint(0,len(maxQactions)-1)]
+        print action
         return action
 
 
